@@ -6,7 +6,7 @@ Trending Repos : a web app that lists the repos that were pushed within the last
   <li>Delete everything in the <strong>/src</strong> folder.</li>
   <li>Download this repo and copy <b>all the content of my /src</b> into your /src folder</li>
   <li>Start the server using <strong>npm start</strong> after you open the terminal inside your project's directory.</li>
-  <li>finally, open your IDE and load the project folder.</li>
+  <li>finally, open your code editor and load the project folder.</li>
   </ol>
 <h2>Why I use react</h1>
 <p>React is the most popular and it is backed by a big company, so no worries about its future. With react, one can get more job opportunities compared to other frameworks. That's the whole story.</p>
