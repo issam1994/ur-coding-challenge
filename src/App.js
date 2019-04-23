@@ -20,6 +20,10 @@ oneMonthBeforeToday = () => {
     let dateString = `${year}-${month < 9 && month !== 0 ? "0" + (month): month === 0 ? 12  : month }-${day < 10 ? "0" + day: day}`
     return dateString
 }
+/////////////////////
+listenToScrolling = () => window.addEventListener("scroll", this.loadNextPage);
+/////////////////////
+dontListenToScrolling = () => window.removeEventListener("scroll", this.loadNextPage);
 //////////////////////
 loadFirstPage = () => {
     let firstPageUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc`
@@ -35,11 +39,10 @@ loadFirstPage = () => {
                 this.listenToScrolling();
         })
 }
-/////////////////////
-listenToScrolling = () => window.addEventListener("scroll", this.loadNextPage);
 ///////////////////////
 loadNextPage = () => {
     if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight){
+        this.dontListenToScrolling();
         let currentPage = this.state.currentPage
         let nextPageUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc${"&page="+(currentPage + 1)}`
         fetch(nextPageUrl)
@@ -51,6 +54,7 @@ loadNextPage = () => {
                             repos: repos.concat(nextPageRepos),
                             currentPage: currentPage + 1
                         })
+                    this.listenToScrolling();
                 })
     }
 }
