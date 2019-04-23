@@ -1,7 +1,7 @@
 import React from 'react'
 
 const RepoDesc = (props) => {
-    return <div className="repoDesc">
+    return <div>
             <p>{props.description}</p>
         </div>
 }
