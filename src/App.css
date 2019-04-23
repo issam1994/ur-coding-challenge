@@ -1,16 +1,7 @@
-* {
-/*    box-sizing: border-box;*/
+div {
+    padding: 0 5px;
+    margin: 5px;
 }
-.App {
-/*  text-align: center;*/
-}
-
-#title {
-    text-align: center;
-    color: white;
-    background: linear-gradient(to right, white, #28a745, #28a745, white);
-}
-
 .avatar {
     padding: 2px;
     width: 150px;
@@ -19,13 +10,6 @@
 .avatar > img {
   width: 100%;
   cursor: pointer;
-}
-.repoName {
-    
-}
-
-.repoDesc {
-    
 }
 
 .starsBox {
@@ -51,13 +35,7 @@
 
     display: inline-block;
 }
-
-div {
-/*    border: 1px solid black;*/
-    padding: 0 5px;
-    margin: 5px;
-}
-.repo {
+.repoContainer {
    padding: 0;
    display: flex;
    justify-content: flex-start;
@@ -72,18 +50,9 @@ div {
     justify-content: center;
     align-items: center;
 }
-.innerContainer {
+.infoContainer {
     display: inline-block;
     padding: 0;
-}
-
-#button {
-    text-align: center;
-}
-
-#button > button {
-    padding:5px 20px;
-    
 }
 
 @media screen and (max-width: 777px) {
@@ -98,11 +67,11 @@ div {
     line-height: 0.5px;
     }
 
-    .repo {
+    .repoContainer {
         justify-content: center;
         flex-flow: wrap;
     }
-    .innerContainer {
+    .infoContainer {
         flex-grow: 1;
         width: 100%;
     }
