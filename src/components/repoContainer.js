@@ -7,11 +7,11 @@ import IssuesBox from './issuesBox'
 import Submitted from './submitted'
 
 const RepoContainer = (props) => {
-    return <div className = "repo">
+    return <div className = "repoContainer">
         <div className = "avatarDiv">
         <Avatar avatar = {props.avatar}/>
         </div>
-        <div className = "innerContainer">
+        <div className = "infoContainer">
         <RepoName name = {props.name}/>
         <RepoDesc description = {props.description}/>
         <StarsBox stars = {props.stars}/>
