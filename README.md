@@ -32,4 +32,4 @@ Trending Repos : a web app that lists the repos that were pushed within the last
 ![alt text](https://raw.githubusercontent.com/issam1994/ur-coding-challenge/master/4_responsive.png)
 
 ### One more thing
-unfortunatly, I don't know how to use git yet, so I didn't bother trying it on this project.
+unfortunatly, I don't know how to use git yet, so I didn't bother trying it on this project.**However, I have made some commits to this repo through github**.Make sure to check them out.
