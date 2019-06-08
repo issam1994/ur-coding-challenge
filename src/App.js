@@ -5,11 +5,12 @@ import RepoContainer from "./components/repoContainer";
 class App extends Component {
   state = {
     repos: [],
-    isLoadingFirstPage: true
+    isLoadingFirstPage: true,
+    currentPage: 0
   };
   //
   componentWillMount() {
-    this.loadFirstPage();
+    this.getDataFromApi();
   }
   //
   oneMonthBeforeToday = () => {
@@ -30,46 +31,41 @@ class App extends Component {
     window.innerHeight + document.documentElement.scrollTop ===
     document.documentElement.offsetHeight;
   //
-  dontListenToScrolling = () =>
+  stopListeningToScrolling = () =>
     window.removeEventListener("scroll", this.loadNextPage);
   //
-  loadFirstPage = () => {
-    let firstPageUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc`;
-    fetch(firstPageUrl)
-      .then(res => res.json())
-      .then(data => {
-        const repos = data.items;
-        this.setState({
-          repos: repos,
-          isLoadingFirstPage: false,
-          currentPage: 1
-        });
-        this.listenToScrolling();
-      });
+
+  updateRepos = fetchedRepos => {
+    let { repos, currentPage } = this.state;
+    this.setState({
+      repos: [...repos, ...fetchedRepos],
+      isLoadingFirstPage: false,
+      currentPage: currentPage + 1
+    });
   };
+    //
+getDataFromApi = () => {
+    let { currentPage } = this.state;
+      let apiUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc${"&page=" +
+        (currentPage + 1)}`;
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+          let repos = data.items;
+          this.updateRepos(repos);
+          this.listenToScrolling();
+        });
+}
   //
   loadNextPage = () => {
     if (this.scrolledToTheEndOfList()) {
-      this.dontListenToScrolling();
-      let currentPage = this.state.currentPage;
-      let nextPageUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc${"&page=" +
-        (currentPage + 1)}`;
-      fetch(nextPageUrl)
-        .then(res => res.json())
-        .then(data => {
-          let { repos } = this.state;
-          let nextPageRepos = data.items;
-          this.setState({
-            repos: repos.concat(nextPageRepos),
-            currentPage: currentPage + 1
-          });
-          this.listenToScrolling();
-        });
+      this.stopListeningToScrolling();
+      this.getDataFromApi();
     }
   };
   //
   componentWillUnmount() {
-    this.dontListenToScrolling();
+    this.stopListeningToScrolling();
   }
 
   //
@@ -149,6 +145,7 @@ class App extends Component {
                 issues={this.displayStarsAndIssuesAppropriatly(
                   repo["open_issues_count"]
                 )}
+                // this part was really fun :D!
                 timeInterval={this.convertAndDisplayTimeWithAppropriateUnit(
                   repo["pushed_at"]
                 )}
