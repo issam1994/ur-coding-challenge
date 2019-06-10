@@ -85,46 +85,46 @@ getDataFromApi = () => {
   //
   convertAndDisplayTimeWithAppropriateUnit = pushed_at => {
     if (
-      this.convertMillesecondsToHours(
+      this.convertMillisecondsToHours(
         this.timePassedSinceLastTimePushed(pushed_at)
       ) >= 24
     )
       return (
-        this.convertMillesecondsToDays(
+        this.convertMillisecondsToDays(
           this.timePassedSinceLastTimePushed(pushed_at)
         ) + " day(s) ago"
       );
     else if (
-      this.convertMillesecondsToMinutes(
+      this.convertMillisecondsToMinutes(
         this.timePassedSinceLastTimePushed(pushed_at)
       ) >= 60
     )
       return (
-        this.convertMillesecondsToHours(
+        this.convertMillisecondsToHours(
           this.timePassedSinceLastTimePushed(pushed_at)
         ) + " hour(s) ago"
       );
     else
       return (
-        this.convertMillesecondsToMinutes(
+        this.convertMillisecondsToMinutes(
           this.timePassedSinceLastTimePushed(pushed_at)
         ) + " minute(s) ago"
       );
   };
   //
-  convertMillesecondsToMinutes = milleseconds => {
+  convertMillisecondsToMinutes = Milliseconds => {
     const A_MILLESECOND_IN_MINUTES = 1000 * 60;
-    return parseInt(milleseconds / A_MILLESECOND_IN_MINUTES);
+    return parseInt(Milliseconds / A_MILLESECOND_IN_MINUTES);
   };
   //
-  convertMillesecondsToHours = milleseconds => {
+  convertMillisecondsToHours = Milliseconds => {
     const A_MILLESECOND_IN_HOURS = 1000 * 60 * 60;
-    return parseInt(milleseconds / A_MILLESECOND_IN_HOURS);
+    return parseInt(Milliseconds / A_MILLESECOND_IN_HOURS);
   };
   //
-  convertMillesecondsToDays = milleseconds => {
+  convertMillisecondsToDays = Milliseconds => {
     const A_MILLESECOND_IN_DAYS = 1000 * 60 * 60 * 24;
-    return parseInt(milleseconds / A_MILLESECOND_IN_DAYS);
+    return parseInt(Milliseconds / A_MILLESECOND_IN_DAYS);
   };
   //
   render() {
