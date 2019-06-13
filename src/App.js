@@ -13,28 +13,28 @@ class App extends Component {
     this.getDataFromApi();
   }
   //
-  oneMonthBeforeToday = () => {
-    let currentDate = new Date();
-    let year = currentDate.getFullYear();
-    let month = currentDate.getMonth();
-    let day = currentDate.getDate();
-    let dateString = `${year}-${
-      month < 9 && month !== 0 ? "0" + month : month === 0 ? 12 : month
-    }-${day < 10 ? "0" + day : day}`;
-    return dateString;
+  getDataFromApi = () => {
+    let { currentPage } = this.state;
+    let apiUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc${"&page=" +
+      (currentPage + 1)}`;
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(this.extractReposFromFetchedData);
   };
   //
-  listenToScrolling = () =>
-    window.addEventListener("scroll", this.loadNextPage);
+  loadNextPage = () => {
+    if (this.hasScrolledToTheEndOfList()) {
+      this.stopListeningToScrolling();
+      this.getDataFromApi();
+    }
+  };
   //
-  scrolledToTheEndOfList = () =>
-    window.innerHeight + document.documentElement.scrollTop ===
-    document.documentElement.offsetHeight;
+  extractReposFromFetchedData = data => {
+    let { items: newRepos } = data;
+    this.updateRepos(newRepos);
+    this.listenToScrolling();
+  };
   //
-  stopListeningToScrolling = () =>
-    window.removeEventListener("scroll", this.loadNextPage);
-  //
-
   updateRepos = fetchedRepos => {
     let { repos, currentPage } = this.state;
     this.setState({
@@ -43,31 +43,73 @@ class App extends Component {
       currentPage: currentPage + 1
     });
   };
-    //
-getDataFromApi = () => {
-    let { currentPage } = this.state;
-      let apiUrl = `https://api.github.com/search/repositories?q=created:>${this.oneMonthBeforeToday()}&sort=stars&order=desc${"&page=" +
-        (currentPage + 1)}`;
-      fetch(apiUrl)
-        .then(res => res.json())
-        .then(data => {
-          let repos = data.items;
-          this.updateRepos(repos);
-          this.listenToScrolling();
-        });
-}
   //
-  loadNextPage = () => {
-    if (this.scrolledToTheEndOfList()) {
-      this.stopListeningToScrolling();
-      this.getDataFromApi();
-    }
+  oneMonthBeforeToday = () => {
+    let currentDate = new Date();
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth();
+    let day = currentDate.getDate();
+      // the api recognizes months as from 1 to 12 while the date obj in js treats months as from 0 to 11.
+    let dateString = `${year}-${
+      month < 9 && month !== 0 ? "0" + month : month === 0 ? 12 : month
+    }-${day < 10 ? "0" + day : day}`;
+    console.log(dateString);
+    return dateString;
   };
   //
-  componentWillUnmount() {
-    this.stopListeningToScrolling();
-  }
-
+  listenToScrolling = () =>
+    window.addEventListener("scroll", this.loadNextPage);
+  //
+  hasScrolledToTheEndOfList = () =>
+    window.innerHeight + document.documentElement.scrollTop ===
+    document.documentElement.offsetHeight;
+  //
+  stopListeningToScrolling = () =>
+    window.removeEventListener("scroll", this.loadNextPage);
+  //
+  convertAndDisplayTimePassedWithAppropriateUnit = pushed_at => {
+    if (this.hasADayOrMorePassedSincePushed(pushed_at))
+      return this.timePassedSincePushedInDays(pushed_at) + " day(s) ago";
+    else if (this.hasAnHourOrMorePassedSincePushed(pushed_at))
+      return this.timePassedSincePushedInHours(pushed_at) + " hour(s) ago";
+    else
+      return this.timePassedSincePushedInMinutes(pushed_at) + " minute(s) ago";
+  };
+  //
+  timePassedSincePushed = pushed_at => {
+    const TODAY = new Date();
+    return TODAY - new Date(pushed_at);
+  };
+  //
+  hasADayOrMorePassedSincePushed = pushed_at =>
+    this.timePassedSincePushedInHours(pushed_at) >= 24;
+  //
+  hasAnHourOrMorePassedSincePushed = pushed_at =>
+    this.timePassedSincePushedInMinutes(pushed_at) >= 60;
+  //
+  timePassedSincePushedInDays = pushed_at =>
+    this.convertTimePassedToDays(this.timePassedSincePushed(pushed_at));
+  //
+  timePassedSincePushedInHours = pushed_at =>
+    this.convertTimePassedToHours(this.timePassedSincePushed(pushed_at));
+  //
+  timePassedSincePushedInMinutes = pushed_at =>
+    this.convertTimePassedToMinutes(this.timePassedSincePushed(pushed_at));
+  //
+  convertTimePassedToMinutes = TimePassed => {
+    const A_MILLESECOND_IN_MINUTES = 1000 * 60;
+    return parseInt(TimePassed / A_MILLESECOND_IN_MINUTES);
+  };
+  //
+  convertTimePassedToHours = TimePassed => {
+    const A_MILLESECOND_IN_HOURS = 1000 * 60 * 60;
+    return parseInt(TimePassed / A_MILLESECOND_IN_HOURS);
+  };
+  //
+  convertTimePassedToDays = TimePassed => {
+    const A_MILLESECOND_IN_DAYS = 1000 * 60 * 60 * 24;
+    return parseInt(TimePassed / A_MILLESECOND_IN_DAYS);
+  };
   //
   displayStarsAndIssuesAppropriatly = starsOrIsssues => {
     if (starsOrIsssues > 1000) {
@@ -76,56 +118,10 @@ getDataFromApi = () => {
       return starsOrIsssues;
     }
   };
-
   //
-  timePassedSinceLastTimePushed = pushed_at => {
-    const TODAY = new Date();
-    return TODAY - new Date(pushed_at);
-  };
-  //
-  convertAndDisplayTimeWithAppropriateUnit = pushed_at => {
-    if (
-      this.convertMillisecondsToHours(
-        this.timePassedSinceLastTimePushed(pushed_at)
-      ) >= 24
-    )
-      return (
-        this.convertMillisecondsToDays(
-          this.timePassedSinceLastTimePushed(pushed_at)
-        ) + " day(s) ago"
-      );
-    else if (
-      this.convertMillisecondsToMinutes(
-        this.timePassedSinceLastTimePushed(pushed_at)
-      ) >= 60
-    )
-      return (
-        this.convertMillisecondsToHours(
-          this.timePassedSinceLastTimePushed(pushed_at)
-        ) + " hour(s) ago"
-      );
-    else
-      return (
-        this.convertMillisecondsToMinutes(
-          this.timePassedSinceLastTimePushed(pushed_at)
-        ) + " minute(s) ago"
-      );
-  };
-  //
-  convertMillisecondsToMinutes = Milliseconds => {
-    const A_MILLESECOND_IN_MINUTES = 1000 * 60;
-    return parseInt(Milliseconds / A_MILLESECOND_IN_MINUTES);
-  };
-  //
-  convertMillisecondsToHours = Milliseconds => {
-    const A_MILLESECOND_IN_HOURS = 1000 * 60 * 60;
-    return parseInt(Milliseconds / A_MILLESECOND_IN_HOURS);
-  };
-  //
-  convertMillisecondsToDays = Milliseconds => {
-    const A_MILLESECOND_IN_DAYS = 1000 * 60 * 60 * 24;
-    return parseInt(Milliseconds / A_MILLESECOND_IN_DAYS);
-  };
+  componentWillUnmount() {
+    this.stopListeningToScrolling();
+  }
   //
   render() {
     const { isLoadingFirstPage, repos } = this.state;
@@ -145,8 +141,7 @@ getDataFromApi = () => {
                 issues={this.displayStarsAndIssuesAppropriatly(
                   repo["open_issues_count"]
                 )}
-                // this part was really fun :D!
-                timeInterval={this.convertAndDisplayTimeWithAppropriateUnit(
+                timeInterval={this.convertAndDisplayTimePassedWithAppropriateUnit(
                   repo["pushed_at"]
                 )}
                 userName={repo.owner.login}
