@@ -8,8 +8,8 @@ Trending Repos : a web app that lists the repos that were pushed within the last
   <li>Start the server using <strong>npm start</strong> after you open the terminal inside your project's directory.</li>
   <li>Finally, open your code editor and load the project folder.</li>
   </ol>
-<h2>Why I use react</h1>
-<p>React is the most popular and it is backed by a big company, so no worries about its future. With react, one can get more job opportunities compared to other frameworks. That's the whole story.</p>
+<h2>Why I used react(although I prefer vue)</h1>
+<p>React is the most popular and it is backed by a big company, so no worries about its future. And with react, one can get more job opportunities compared to other frameworks. That's the whole story.</p>
 <h2>Some shots taken during production</h1>
 
 ### 1)
@@ -32,4 +32,4 @@ Trending Repos : a web app that lists the repos that were pushed within the last
 ![alt text](https://raw.githubusercontent.com/issam1994/ur-coding-challenge/master/4_responsive.png)
 
 ### One more thing
-unfortunatly, I don't know how to use git yet, so I didn't bother trying it on this project.**However, I have made some commits to this repo through github**.Make sure to check them out.
+commits were made through github, not git.
